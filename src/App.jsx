@@ -1,6 +1,52 @@
+import { useState, useEffect } from 'react';
+import Loading from './components/Loading';
+import Tours from './components/Tours';
+
 const url = 'https://course-api.com/react-tours-project';
 
 const App = () => {
-  return <h2>Tours Starter</h2>;
+  const [tours, setTours] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        const toursData = await response.json();
+        setTours(toursData);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(true);
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const removeTour = (id) => {
+    const newTours = tours.filter((tour) => tour.id !== id);
+    setTours(newTours);
+  };
+
+  if (isLoading) {
+    return (
+      <main>
+        <Loading />
+      </main>
+    );
+  }
+
+  if (tours.length === 0) {
+    return (
+      <main>
+        <h3>No tours found, please reload.</h3>
+      </main>
+    );
+  }
+
+  return (
+    <main>
+      <Tours tours={tours} removeTour={removeTour} />
+    </main>
+  );
 };
 export default App;

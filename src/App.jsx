@@ -7,18 +7,19 @@ const url = 'https://course-api.com/react-tours-project';
 const App = () => {
   const [tours, setTours] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(url);
+      const toursData = await response.json();
+      setTours(toursData);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(true);
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url);
-        const toursData = await response.json();
-        setTours(toursData);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(true);
-        console.log(error);
-      }
-    };
     fetchData();
   }, []);
 
@@ -38,7 +39,12 @@ const App = () => {
   if (tours.length === 0) {
     return (
       <main>
-        <h3>No tours found, please reload.</h3>
+        <div className="title">
+          <h3>No tours found, please reload.</h3>
+          <button className="btn" onClick={() => fetchData()}>
+            Refresh
+          </button>
+        </div>
       </main>
     );
   }
